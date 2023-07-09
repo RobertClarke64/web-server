@@ -6,19 +6,23 @@ use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
 };
-use log::{info, trace, warn};
+use log::{info};
 use simple_logger::SimpleLogger;
 use std::{thread, time::Duration};
+use rust_web_server::ThreadPool;
 
 fn main() {
     SimpleLogger::new().init().unwrap();
 
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let pool = ThreadPool::new(4);
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
-        handle_connection(stream);
+        pool.execute(|| {
+            handle_connection(stream);
+        });
     }
 }
 
