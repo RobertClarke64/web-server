@@ -8,6 +8,7 @@ use std::{
 };
 use log::{info, trace, warn};
 use simple_logger::SimpleLogger;
+use std::{thread, time::Duration};
 
 fn main() {
     SimpleLogger::new().init().unwrap();
@@ -27,10 +28,13 @@ fn handle_connection(mut stream: TcpStream) {
     let request_line = buf_reader.lines().next().unwrap().unwrap();
     info!("{request_line}");
 
-    let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
-        ("HTTP/1.1 200 OK", HTTP_INDEX)
-    } else {
-        ("HTTP/1.1 404 NOT FOUND", NOT_FOUND_PAGE)
+    let (status_line, filename) = match &request_line[..] {
+        "GET / HTTP/1.1" => ("HTTP/1.1 200 OK", HTTP_INDEX),
+        "GET /sleep HTTP/1.1" => {
+            thread::sleep(Duration::from_secs(5));
+            ("HTTP/1.1 200 OK", HTTP_INDEX)
+        },
+        _ => ("HTTP/1.1 404 NOT FOUND", NOT_FOUND_PAGE),
     };
 
     let contents = fs::read_to_string(filename).unwrap();
