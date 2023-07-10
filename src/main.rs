@@ -6,7 +6,7 @@ use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
 };
-use log::{info};
+use log::info;
 use simple_logger::SimpleLogger;
 use std::{thread, time::Duration};
 use rust_web_server::ThreadPool;
