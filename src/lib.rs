@@ -17,7 +17,7 @@ impl ThreadPool {
     /// of threads is zero.
     pub fn build(size: usize) -> Result<ThreadPool, PoolCreationError> {
         if size < 1  {
-            return Err(PoolCreationError::new("Cannot create thread pool of size 0"));
+            return Err(PoolCreationError::new("Thread pool must contain at least 1 thread"));
         }
 
         let mut threads = Vec::with_capacity(size);
